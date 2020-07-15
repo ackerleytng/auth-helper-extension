@@ -28,9 +28,13 @@ const fillState = (config) => {
 
   if (config.token) {
     document.getElementById('token').value = config.token;
-    document.getElementById('payload').value = JSON.stringify(
-      parseJwt(config.token), null, 2
-    ) ;
+    const parsedToken = parseJwt(config.token);
+    document.getElementById('payload').value =
+      JSON.stringify(parsedToken, null, 2) ;
+    document.getElementById('iat').value =
+      new Date(parsedToken.iat * 1000).toString();
+    document.getElementById('exp').value =
+      new Date(parsedToken.exp * 1000).toString();
   }
 }
 
