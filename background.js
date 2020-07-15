@@ -23,7 +23,7 @@ const toFormData = (o) => {
   return data;
 }
 
-const updateToken = ({domain, keycloakDomain, realm, username, password, clientId, clientSecret}) => {
+const getToken = ({domain, keycloakDomain, realm, username, password, clientId, clientSecret}) => {
   const url = `${keycloakDomain}/auth/realms/${realm}/protocol/openid-connect/token`;
 
   const data = {
@@ -38,10 +38,7 @@ const updateToken = ({domain, keycloakDomain, realm, username, password, clientI
     method: 'post',
     body: toFormData(data)
   }).then(r => r.json())
-    .then(r => {
-      settings.config.token = r.access_token;
-      return r.access_token;
-    })
+    .then(r => r.access_token);
 }
 
 const onMessageListener = ({action, message}, sender, sendResponse) => {
@@ -55,10 +52,13 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
     // Update settings
     settings.config = {...settings.config, ...message};
 
-    updateToken(message)
-      .then(_ => sendResponse({
-        config: settings.config,
-      }));
+    getToken(message)
+      .then(t => {
+        console.log({t});
+        // Update token into settings
+        settings.config.token = t;
+        sendResponse({ config: settings.config });
+      });
 
     // Wait before asynchronously using sendResponse
     return true;
