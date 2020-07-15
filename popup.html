@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <form id="configForm" class="form-example">
+      <div class="form-example">
+        <label for="active">Active</label>
+        <input type="checkbox" name="active" id="active" checked>
+      </div>
+
+      <div class="form-example">
+        <label for="keycloakDomain">Keycloak Domain </label>
+        <input type="text" name="keycloakDomain" id="keycloakDomain">
+      </div>
+
+      <div class="form-example">
+        <label for="realm">Realm </label>
+        <input type="text" name="realm" id="realm">
+      </div>
+
+      <div class="form-example">
+        <label for="username">Username </label>
+        <input type="text" name="username" id="username">
+      </div>
+
+      <div class="form-example">
+        <label for="password">Password </label>
+        <input type="text" name="password" id="password">
+      </div>
+
+      <div class="form-example">
+        <label for="clientId">Client Id </label>
+        <input type="text" name="clientId" id="clientId">
+      </div>
+
+      <div class="form-example">
+        <label for="clientSecret">Client Secret </label>
+        <input type="text" name="clientSecret" id="clientSecret">
+      </div>
+
+      <div class="form-example">
+        <label for="domain">Domain </label>
+        <input type="text" name="domain" id="domain">
+      </div>
+
+      <div class="form-example">
+        <input id="configSet" type="button" value="Set!">
+      </div>
+
+      <div class="form-example">
+        <label for="token">Token </label>
+        <textarea name="token" id="token" rows="10" cols="30" disabled>
+        </textarea>
+      </div>
+
+      <div class="form-example">
+        <label for="payload">Payload </label>
+        <textarea name="payload" id="payload" rows="10" cols="30" disabled>
+        </textarea>
+      </div>
+    </form>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
