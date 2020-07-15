@@ -18,13 +18,15 @@ const fillState = (config) => {
   console.log(config);
 
   [
-    'domain', 'active', 'keycloakDomain', 'realm',
+    'domain', 'keycloakDomain', 'realm',
     'username', 'password', 'clientId', 'clientSecret'
   ].forEach(k => {
-    if (config[k]) {
+    if (config[k] !== undefined) {
       document.getElementById(k).value = config[k];
     }
   });
+
+  document.getElementById('active').checked = config.active;
 
   if (config.token) {
     document.getElementById('token').value = config.token;
@@ -40,7 +42,7 @@ const fillState = (config) => {
 
 const setConfig = (e) => {
   const domain = document.getElementById('domain').value;
-  const active = document.getElementById('active').value;
+  const active = document.getElementById('active').checked;
   const keycloakDomain = document.getElementById('keycloakDomain').value;
   const realm = document.getElementById('realm').value;
   const username = document.getElementById('username').value;

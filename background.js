@@ -1,7 +1,6 @@
 'use strict';
 
 var settings = {
-  active: true,
   config: {
     active: true,
     domain: 'httpbin.org',
@@ -54,9 +53,11 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
 
     getToken(message)
       .then(t => {
-        console.log({t});
         // Update token into settings
         settings.config.token = t;
+        console.log({
+          setConfig: settings.config
+        });
         sendResponse({ config: settings.config });
       });
 
@@ -64,7 +65,7 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
     return true;
   } else if (action.toLowerCase() === 'get') {
     console.log({
-      config: settings.config
+      getConfig: settings.config
     });
     sendResponse({
       config: settings.config
@@ -78,9 +79,7 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
 // Token injection
 
 const beforeSendHeadersListener = ({url, requestHeaders}) => {
-  const {active, configs} = settings;
-
-  if (!active) {
+  if (!settings.config.active) {
     console.log({ignoring: url});
     return {requestHeaders};
   }
