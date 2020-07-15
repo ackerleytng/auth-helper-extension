@@ -44,15 +44,6 @@ const updateToken = ({domain, keycloakDomain, realm, username, password, clientI
     })
 }
 
-const updateTokensIfNecessary = () => {
-  // TODO fix this later
-  // Always get new token, for now
-  for (const domain in settings.configs) {
-    const config = settings.configs[domain];
-    updateToken(domain, config);
-  }
-};
-
 const onMessageListener = ({action, message}, sender, sendResponse) => {
   if (sender.tab) {
     sendResponse({error: 'Not from extension'});
@@ -80,19 +71,11 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
     });
   }
 
-  // updateTokensIfNecessary();
-
   // No need to wait to use sendResponse
   return false;
 }
 
 // Token injection
-
-const findMatchingDomain = (configs, url) => {
-  // TODO update this later when we have more than one config
-  const matching = Object.keys(configs).filter(u => url.match(u) !== null);
-  return (matching.length > 0) ? matching[0] : null;
-};
 
 const beforeSendHeadersListener = ({url, requestHeaders}) => {
   const {active, configs} = settings;
