@@ -97,10 +97,6 @@ const beforeSendHeadersListener = ({url, requestHeaders}) => {
     name: 'Authorization',
     value: `Bearer ${settings.config.token}`
   });
-  requestHeaders.push({
-    name: 'Debug',
-    value: settings.config.token,
-  });
 
   return {requestHeaders};
 };
