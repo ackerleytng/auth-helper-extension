@@ -15,7 +15,9 @@ const parseJwt = (token) => {
 };
 
 const fillState = (config) => {
-  console.log(config);
+  if (!config) {
+    return;
+  }
 
   [
     'domain', 'keycloakDomain', 'realm',
@@ -32,7 +34,7 @@ const fillState = (config) => {
     document.getElementById('token').value = config.token;
     const parsedToken = parseJwt(config.token);
     document.getElementById('payload').value =
-      JSON.stringify(parsedToken, null, 2) ;
+      JSON.stringify(parsedToken, null, 2);
     document.getElementById('iat').value =
       new Date(parsedToken.iat * 1000).toString();
     document.getElementById('exp').value =
@@ -63,12 +65,21 @@ const setConfig = (e) => {
 
   chrome.runtime.sendMessage(
     {action: 'set', message},
-    ({error, config}) => {
+    ({error, config, details}) => {
       if (error) {
-        console.log(error);
+        let msg = `Error: ${error}`;
+
+        if (details) {
+          const detailStr = JSON.stringify(details, null, 2);
+          msg += `\nDetails:\n${detailStr}`;
+        }
+
+        document.getElementById('status').value = msg;
+        return;
       }
 
       fillState(config);
+      document.getElementById('status').value = "Updated values!";
     }
   )
 };

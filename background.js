@@ -36,8 +36,16 @@ const getToken = ({domain, keycloakDomain, realm, username, password, clientId, 
   return fetch(url, {
     method: 'post',
     body: toFormData(data)
-  }).then(r => r.json())
-    .then(r => r.access_token);
+  }).then(
+    r => r.json()
+      .then((json) => {
+        if (r.ok) {
+          return json.access_token;
+        } else {
+          throw json;
+        }
+      })
+  );
 }
 
 const onMessageListener = ({action, message}, sender, sendResponse) => {
@@ -59,6 +67,12 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
           setConfig: settings.config
         });
         sendResponse({ config: settings.config });
+      })
+      .catch(details => {
+        console.log({
+          errorSetConfig: details
+        });
+        sendResponse({error: 'Error getting token', details});
       });
 
     // Wait before asynchronously using sendResponse
