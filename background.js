@@ -10,7 +10,7 @@ var settings = {
     username: 'user0',
     password: 'password',
     clientId: 'httpbin',
-    clientSecret: '4e38706e-68ba-46aa-82d5-167244da84be',
+    clientSecret: '396fb3e5-ad30-4d33-aac3-aaf807bff70d',
   }
 };
 
@@ -36,13 +36,19 @@ const getToken = ({domain, keycloakDomain, realm, username, password, clientId, 
   return fetch(url, {
     method: 'post',
     body: toFormData(data)
-  }).then(
+  }).catch(
+    // Catch any fetch-related rejects
+    e => Promise.reject({
+      message: "Check your Keycloak Domain setting?",
+      fetchError: e.message
+    })
+  ).then(
     r => r.json()
       .then((json) => {
         if (r.ok) {
           return json.access_token;
         } else {
-          throw json;
+          return Promise.reject({authError: json});
         }
       })
   );
@@ -56,10 +62,18 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
   console.log({action, message});
 
   if (action.toLowerCase() === 'set') {
-    // Update settings
-    settings.config = {...settings.config, ...message};
+    const {fieldName, value} = message;
+    console.log({set: message});
+    settings.config[fieldName] = value;
+  } else if (action.toLowerCase() === 'get') {
+    console.log({get: settings.config});
+    sendResponse({
+      config: settings.config
+    });
+  } else if (action.toLowerCase() === 'refresh') {
+    console.log({refresh: settings.config});
 
-    getToken(message)
+    getToken(settings.config)
       .then(t => {
         // Update token into settings
         settings.config.token = t;
@@ -77,13 +91,6 @@ const onMessageListener = ({action, message}, sender, sendResponse) => {
 
     // Wait before asynchronously using sendResponse
     return true;
-  } else if (action.toLowerCase() === 'get') {
-    console.log({
-      getConfig: settings.config
-    });
-    sendResponse({
-      config: settings.config
-    });
   }
 
   // No need to wait to use sendResponse

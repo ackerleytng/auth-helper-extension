@@ -42,26 +42,16 @@ const fillState = (config) => {
   }
 }
 
-const setConfig = (e) => {
-  const domain = document.getElementById('domain').value;
-  const active = document.getElementById('active').checked;
-  const keycloakDomain = document.getElementById('keycloakDomain').value;
-  const realm = document.getElementById('realm').value;
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  const clientId = document.getElementById('clientId').value;
-  const clientSecret = document.getElementById('clientSecret').value;
+const setConfig = (fieldName) => (e) => {
+  const element = document.getElementById(fieldName);
 
-  const message = {
-    domain,
-    active,
-    keycloakDomain,
-    realm,
-    username,
-    password,
-    clientId,
-    clientSecret,
-  };
+  const value = element.type === 'checkbox'
+        ? element.checked
+        : element.value;
+
+  const message = { fieldName, value };
+
+  console.log({setConfig: message})
 
   chrome.runtime.sendMessage(
     {action: 'set', message},
@@ -77,9 +67,28 @@ const setConfig = (e) => {
         document.getElementById('status').value = msg;
         return;
       }
+    }
+  )
+};
+
+const refreshToken = (e) => {
+  chrome.runtime.sendMessage(
+    {action: 'refresh'},
+    ({error, config, details}) => {
+      if (error) {
+        let msg = `Error: ${error}`;
+
+        if (details) {
+          const detailStr = JSON.stringify(details, null, 2);
+          msg += `\nDetails:\n${detailStr}`;
+        }
+
+        document.getElementById('status').value = msg;
+        return;
+      }
 
       fillState(config);
-      document.getElementById('status').value = "Updated values!";
+      document.getElementById('status').value = "Refreshed token!";
     }
   )
 };
@@ -90,4 +99,10 @@ chrome.runtime.sendMessage(
   {action: 'get'},
   ({config}) => { fillState(config); }
 );
-document.getElementById('configSet').onclick = setConfig;
+document.getElementById('getRefreshToken').onclick = refreshToken;
+[
+  'active', 'domain', 'keycloakDomain', 'realm',
+  'username', 'password', 'clientId', 'clientSecret'
+].forEach(k => {
+  document.getElementById(k).addEventListener('input', setConfig(k));
+});
