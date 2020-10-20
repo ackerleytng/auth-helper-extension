@@ -1,6 +1,6 @@
 {
   "name": "Authentication Helper",
-  "version": "0.1",
+  "version": "0.2",
   "description": "Helps you get an access token to attach it with every request. Good for development!",
   "permissions": [
     "<all_urls>",
